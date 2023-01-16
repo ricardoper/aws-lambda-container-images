@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# NOTE: Code extracted & modified from the AWS Lambda Container Images for Python 3.9
+
+export AWS_EXECUTION_ENV=AWS_Lambda_python3
+
+if [ -z "$AWS_LAMBDA_EXEC_WRAPPER" ]; then
+  exec /usr/bin/python3 /var/runtime/bootstrap.py
+else
+  wrapper="$AWS_LAMBDA_EXEC_WRAPPER"
+  if [ ! -f "$wrapper" ]; then
+    echo "$wrapper: does not exist"
+    exit 127
+  fi
+  if [ ! -x "$wrapper" ]; then
+    echo "$wrapper: is not an executable"
+    exit 126
+  fi
+    exec -- "$wrapper" /usr/bin/python3 /var/runtime/bootstrap.py
+fi

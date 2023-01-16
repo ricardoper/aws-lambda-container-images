@@ -1,0 +1,9 @@
+awslambdaric
+boto3
+botocore
+python-dateutil
+jmespath
+s3transfer
+simplejson
+six
+urllib3
