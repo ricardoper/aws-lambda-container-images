@@ -9,58 +9,45 @@
 # curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"type":"event","data":{"key":"value"}}'
 #
 
-FROM alpine:3.16 AS aws-builder
+FROM alpine:3.17 AS go-app-builder
 
 ENV LAMBDA_TASK_ROOT /var/task
 ENV LAMBDA_RUNTIME_DIR /var/runtime
 
 
+WORKDIR "${LAMBDA_TASK_ROOT}"
+
 RUN apk add --no-cache \
-        autoconf \
-        automake \
-        cmake \
         curl \
-        curl-dev \
-        g++ \
-        libexecinfo-dev \
-        libtool \
-        make \
-        python3-dev \
-        py3-pip \
+        go \
     && curl -Lo /usr/bin/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie \
     && chmod +x /usr/bin/aws-lambda-rie
 
-
-COPY aws-runtime/ "${LAMBDA_RUNTIME_DIR}"
 COPY src/ "${LAMBDA_TASK_ROOT}"
 
-RUN chmod +x "${LAMBDA_RUNTIME_DIR}/bootstrap" \
-    \
-    && pip3 install -r "${LAMBDA_RUNTIME_DIR}/requirements.txt" --target "${LAMBDA_RUNTIME_DIR}" \
-    && pip3 install -r "${LAMBDA_TASK_ROOT}/requirements.txt" --target "${LAMBDA_TASK_ROOT}"
+RUN go mod tidy \
+    && go build -o go-app
 
 
 # == New Stage ==
 
 
-FROM alpine:3.16
+FROM alpine:3.17
 
 ENV LAMBDA_TASK_ROOT /var/task
 ENV LAMBDA_RUNTIME_DIR /var/runtime
 
 
-RUN apk add --no-cache \
-        curl \
-        python3
+WORKDIR "${LAMBDA_TASK_ROOT}"
 
-
-COPY --from=aws-builder "${LAMBDA_RUNTIME_DIR}" "${LAMBDA_RUNTIME_DIR}"
-COPY --from=aws-builder "${LAMBDA_TASK_ROOT}" "${LAMBDA_TASK_ROOT}"
-COPY --from=aws-builder --chmod=0755 /usr/bin/aws-lambda-rie /usr/bin/aws-lambda-rie
+COPY --from=go-app-builder "${LAMBDA_TASK_ROOT}/go-app" "${LAMBDA_TASK_ROOT}/go-app"
+COPY --from=go-app-builder --chmod=0755 /usr/bin/aws-lambda-rie /usr/bin/aws-lambda-rie
 
 COPY --chmod=0755 lambda-entrypoint.sh /lambda-entrypoint.sh
+
+RUN ln -s "${LAMBDA_TASK_ROOT}/go-app" /go-app
 
 
 ENTRYPOINT ["/lambda-entrypoint.sh"]
 
-CMD ["lambda_function.lambda_handler"]
+CMD ["/go-app"]
