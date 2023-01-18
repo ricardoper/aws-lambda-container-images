@@ -41,11 +41,13 @@ ENV LAMBDA_RUNTIME_DIR /var/runtime
 WORKDIR "${LAMBDA_TASK_ROOT}"
 
 COPY --from=go-app-builder "${LAMBDA_TASK_ROOT}/go-app" "${LAMBDA_TASK_ROOT}/go-app"
-COPY --from=go-app-builder --chmod=0755 /usr/bin/aws-lambda-rie /usr/bin/aws-lambda-rie
+COPY --from=go-app-builder /usr/bin/aws-lambda-rie /usr/bin/aws-lambda-rie
 
-COPY --chmod=0755 lambda-entrypoint.sh /lambda-entrypoint.sh
+COPY lambda-entrypoint.sh /lambda-entrypoint.sh
 
-RUN ln -s "${LAMBDA_TASK_ROOT}/go-app" /go-app
+RUN chmod +x /usr/bin/aws-lambda-rie \
+    && chmod +x /lambda-entrypoint.sh \
+    && ln -s "${LAMBDA_TASK_ROOT}/go-app" /go-app
 
 
 ENTRYPOINT ["/lambda-entrypoint.sh"]

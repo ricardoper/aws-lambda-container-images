@@ -1,15 +1,13 @@
 import json
+from datetime import datetime
 
 def lambda_handler(event, context):
-    statusCode: int = 200
-    bodyResponse: dict = {
-        'msg': 'Hello world!'
-    }
+    now: str = datetime.now().strftime('%Y/%m/%d %H:%M:%S ')
 
-    print(' * DEBUG: Hello world!')
-    print(' * EVENT: ' + str(event))
+    print(now + ' * DEBUG: Hello world!')
+    print(now + ' * EVENT: ' + str(event))
 
     return {
-        'statusCode': statusCode,
-        'body': json.dumps(bodyResponse | event)
+        'statusCode': 200,
+        'body': json.dumps(event)
     }

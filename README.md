@@ -10,36 +10,11 @@ Because AWS has some bloated images, you can find in this repository some images
 AWS Lambda Golang 1.18  >  832MB<br>
 (based on Amazon Linux v2)
 
-Alpine Lambda **Golang 1.19**  >  **22MB**<br>
+Alpine Lambda **Golang 1.19**  >  **27MB**<br>
 (based on Alpine Linux 3.17)
 
 **NOTE**:
 - The Alpine image has the same functionalities of the AWS image.
-
-### Build & Run container images
-
-```
-cd ./golang-alpine
-
-DOCKER_BUILDKIT=1 docker build --tag [TAG] .
-docker run --rm -it -p 9000:8080 [TAG]
-```
-
-BuildKit required: https://docs.docker.com/build/buildkit/
-
-### Vulnerability scan
-
-Vulnerability scan is recommended. [Trivy](https://aquasecurity.github.io/trivy/) is used to scan these images.
-```
-trivy image [TAG]
-```
-
-### Container local testing
-
-With cURL:
-```
-curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"type":"event","data":{"key":"value"}}'
-```
 
 ### Lambda Start times
 
@@ -59,37 +34,12 @@ DOCKER
 AWS Lambda Python 3.9  >  595MB<br>
 (based on Amazon Linux v2)
 
-Alpine Lambda **Python 3.10**  >  **140MB**<br>
+Alpine Lambda **Python 3.10**  >  **146MB**<br>
 (based on Alpine Linux 3.16)
 
 **NOTE**:
 - The Alpine image has the same functionalities of the AWS image.
 - The AWS image has a lot of unnecessary packages, like Python 2.7.
-
-### Build & Run container images
-
-```
-cd ./python-alpine
-
-DOCKER_BUILDKIT=1 docker build --tag [TAG] .
-docker run --rm -it -p 9000:8080 [TAG]
-```
-
-BuildKit required: https://docs.docker.com/build/buildkit/
-
-### Vulnerability scan
-
-Vulnerability scan is recommended. [Trivy](https://aquasecurity.github.io/trivy/) is used to scan these images.
-```
-trivy image [TAG]
-```
-
-### Container local testing
-
-With cURL:
-```
-curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"type":"event","data":{"key":"value"}}'
-```
 
 ### Lambda Start times
 
@@ -101,4 +51,33 @@ DOCKER
   ALPINE | 140MB |  * 0.876s  0.264s  0.273s  0.178s  * 0.843s  0.293s  0.192s
 
 * Cold Start
+```
+
+
+## Build & Run container images
+
+```
+cd ./golang-alpine
+cd ./python-alpine
+
+docker build --tag [TAG] .
+docker run --rm -it -p 9000:8080 [TAG]
+```
+
+### Vulnerability scan
+
+For vulnerability scans is recommended to use [Trivy](https://aquasecurity.github.io/trivy/).
+```
+trivy image [TAG]
+```
+
+### Container local testing
+
+With cURL:
+```
+curl \
+    -X POST \
+    -H 'Content-Type: application/json' \
+    -d @_events/apigateway-proxy.json \
+    'http://localhost:9000/2015-03-31/functions/function/invocations'
 ```

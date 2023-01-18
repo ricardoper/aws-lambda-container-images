@@ -1,0 +1,109 @@
+{
+  "version": "1.0",
+  "resource": "/test-apigw-lambda",
+  "path": "/test-apigw-lambda",
+  "httpMethod": "PUT",
+  "headers": {
+    "Content-Length": "123",
+    "Content-Type": "application/json",
+    "Host": "api.domain.tld",
+    "True-Client-IP": "10.20.30.40",
+    "User-Agent": "FastAPI",
+    "X-Amzn-Trace-Id": "c759019c-8c4b-49e4-b120-c1c3434f918b",
+    "X-Forwarded-For": "10.20.30.40",
+    "X-Forwarded-Port": "443",
+    "X-Forwarded-Proto": "https",
+    "accept": "*/*",
+    "accept-encoding": "gzip"
+  },
+  "multiValueHeaders": {
+    "Content-Length": [
+      "123"
+    ],
+    "Content-Type": [
+      "application/json"
+    ],
+    "Host": [
+      "api.domain.tld"
+    ],
+    "True-Client-IP": [
+      "10.20.30.40"
+    ],
+    "User-Agent": [
+      "FastAPI"
+    ],
+    "X-Amzn-Trace-Id": [
+      "c759019c-8c4b-49e4-b120-c1c3434f918b"
+    ],
+    "X-Forwarded-For": [
+      "10.20.30.40"
+    ],
+    "X-Forwarded-Port": [
+      "443"
+    ],
+    "X-Forwarded-Proto": [
+      "https"
+    ],
+    "accept": [
+      "*/*"
+    ],
+    "accept-encoding": [
+      "gzip"
+    ]
+  },
+  "queryStringParameters": {
+    "key1": "value1",
+    "key2": "value2",
+    "key3": "value3"
+  },
+  "multiValueQueryStringParameters": {
+    "key1": [
+      "value1"
+    ],
+    "key2": [
+      "value2"
+    ],
+    "key3": [
+      "value3"
+    ]
+  },
+  "requestContext": {
+    "accountId": "111122223333",
+    "apiId": "abcd123456",
+    "authorizer": {
+      "claims": null,
+      "scopes": null
+    },
+    "domainName": "api.domain.tld",
+    "domainPrefix": "api",
+    "extendedRequestId": "1234567_aiFeJlA=",
+    "httpMethod": "PUT",
+    "identity": {
+      "accessKey": null,
+      "accountId": null,
+      "caller": null,
+      "cognitoAmr": null,
+      "cognitoAuthenticationProvider": null,
+      "cognitoAuthenticationType": null,
+      "cognitoIdentityId": null,
+      "cognitoIdentityPoolId": null,
+      "principalOrgId": null,
+      "sourceIp": "10.20.30.40",
+      "user": null,
+      "userAgent": "FastAPI",
+      "userArn": null
+    },
+    "path": "/test-apigw-stage/test-apigw-lambda",
+    "protocol": "HTTP/1.1",
+    "requestId": "1234567_aiFeJlA=",
+    "requestTime": "01/Jan/2023:23:59:59 +0000",
+    "requestTimeEpoch": 1672617599,
+    "resourceId": "PUT /test-apigw-lambda",
+    "resourcePath": "/test-apigw-lambda",
+    "stage": "test-apigw-stage"
+  },
+  "pathParameters": null,
+  "stageVariables": null,
+  "body": "{\"key1\":\"value1\",\"key2\":\"value2\",\"key3\":{\"key4\":\"value4\",\"key5\":\"value5\"}}",
+  "isBase64Encoded": false
+}

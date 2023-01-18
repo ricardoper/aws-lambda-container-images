@@ -30,7 +30,6 @@ RUN apk add --no-cache \
     && curl -Lo /usr/bin/aws-lambda-rie https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie \
     && chmod +x /usr/bin/aws-lambda-rie
 
-
 COPY aws-runtime/ "${LAMBDA_RUNTIME_DIR}"
 COPY src/ "${LAMBDA_TASK_ROOT}"
 
@@ -53,12 +52,14 @@ RUN apk add --no-cache \
         curl \
         python3
 
-
 COPY --from=aws-builder "${LAMBDA_RUNTIME_DIR}" "${LAMBDA_RUNTIME_DIR}"
 COPY --from=aws-builder "${LAMBDA_TASK_ROOT}" "${LAMBDA_TASK_ROOT}"
-COPY --from=aws-builder --chmod=0755 /usr/bin/aws-lambda-rie /usr/bin/aws-lambda-rie
+COPY --from=aws-builder /usr/bin/aws-lambda-rie /usr/bin/aws-lambda-rie
 
-COPY --chmod=0755 lambda-entrypoint.sh /lambda-entrypoint.sh
+COPY lambda-entrypoint.sh /lambda-entrypoint.sh
+
+RUN chmod +x /usr/bin/aws-lambda-rie \
+    && chmod +x /lambda-entrypoint.sh
 
 
 ENTRYPOINT ["/lambda-entrypoint.sh"]
