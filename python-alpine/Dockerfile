@@ -1,18 +1,23 @@
 #
 # docker build --tag [TAG] .
-# docker run --rm -it -p 9000:8080 [TAG]
+# docker run --rm -p 9000:8080 [TAG]
 #
 # Vulnerability scan recommended (https://aquasecurity.github.io/trivy/):
 #  trivy image [TAG]
 #
 # Local test with cURL:
-# curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"type":"event","data":{"key":"value"}}'
+# curl \
+#    -X POST \
+#    -H 'Content-Type: application/json' \
+#    -d @_events/apigateway-proxy.json \
+#    'http://localhost:9000/2015-03-31/functions/function/invocations'
 #
 
 FROM alpine:3.16 AS aws-builder
 
 ENV LAMBDA_TASK_ROOT /var/task
 ENV LAMBDA_RUNTIME_DIR /var/runtime
+ENV PATH="${PATH}:${LAMBDA_RUNTIME_DIR}/bin"
 
 
 RUN apk add --no-cache \
@@ -35,8 +40,8 @@ COPY src/ "${LAMBDA_TASK_ROOT}"
 
 RUN chmod +x "${LAMBDA_RUNTIME_DIR}/bootstrap" \
     \
-    && pip3 install -r "${LAMBDA_RUNTIME_DIR}/requirements.txt" --target "${LAMBDA_RUNTIME_DIR}" \
-    && pip3 install -r "${LAMBDA_TASK_ROOT}/requirements.txt" --target "${LAMBDA_TASK_ROOT}"
+    && pip3 install --no-cache-dir --upgrade -r "${LAMBDA_RUNTIME_DIR}/requirements.txt" --target "${LAMBDA_RUNTIME_DIR}" \
+    && pip3 install --no-cache-dir --upgrade -r "${LAMBDA_TASK_ROOT}/requirements.txt" --target "${LAMBDA_RUNTIME_DIR}"
 
 
 # == New Stage ==
@@ -46,6 +51,7 @@ FROM alpine:3.16
 
 ENV LAMBDA_TASK_ROOT /var/task
 ENV LAMBDA_RUNTIME_DIR /var/runtime
+ENV PATH="${PATH}:${LAMBDA_RUNTIME_DIR}/bin"
 
 
 RUN apk add --no-cache \

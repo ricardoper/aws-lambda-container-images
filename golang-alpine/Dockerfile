@@ -1,12 +1,16 @@
 #
 # docker build --tag [TAG] .
-# docker run --rm -it -p 9000:8080 [TAG]
+# docker run --rm -p 9000:8080 [TAG]
 #
 # Vulnerability scan recommended (https://aquasecurity.github.io/trivy/):
 #  trivy image [TAG]
 #
 # Local test with cURL:
-# curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"type":"event","data":{"key":"value"}}'
+# curl \
+#    -X POST \
+#    -H 'Content-Type: application/json' \
+#    -d @_events/apigateway-proxy.json \
+#    'http://localhost:9000/2015-03-31/functions/function/invocations'
 #
 
 FROM alpine:3.17 AS go-app-builder
