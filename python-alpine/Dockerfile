@@ -13,7 +13,7 @@
 #    'http://localhost:9000/2015-03-31/functions/function/invocations'
 #
 
-FROM alpine:3.16 AS aws-builder
+FROM alpine:3.17 AS aws-builder
 
 ENV LAMBDA_TASK_ROOT /var/task
 ENV LAMBDA_RUNTIME_DIR /var/runtime
@@ -27,7 +27,7 @@ RUN apk add --no-cache \
         curl \
         curl-dev \
         g++ \
-        libexecinfo-dev \
+        git \
         libtool \
         make \
         python3-dev \
@@ -38,6 +38,11 @@ RUN apk add --no-cache \
 COPY aws-runtime/ "${LAMBDA_RUNTIME_DIR}"
 COPY src/ "${LAMBDA_TASK_ROOT}"
 
+# libexecinfo-dev depency for awslambdaric
+RUN git clone https://github.com/mikroskeem/libexecinfo.git /tmp/libexecinfo \
+    && cd /tmp/libexecinfo \
+    && make install PREFIX=/usr
+
 RUN chmod +x "${LAMBDA_RUNTIME_DIR}/bootstrap" \
     \
     && pip3 install --no-cache-dir --upgrade -r "${LAMBDA_RUNTIME_DIR}/requirements.txt" --target "${LAMBDA_RUNTIME_DIR}" \
@@ -47,7 +52,7 @@ RUN chmod +x "${LAMBDA_RUNTIME_DIR}/bootstrap" \
 # == New Stage ==
 
 
-FROM alpine:3.16
+FROM alpine:3.17
 
 ENV LAMBDA_TASK_ROOT /var/task
 ENV LAMBDA_RUNTIME_DIR /var/runtime
